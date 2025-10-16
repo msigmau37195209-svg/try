@@ -6,7 +6,10 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <title>marker-less</title>
-    <script src="./script.js"></script>
+    <script type="module" src="./script.js"></script>
+
+    <link rel="icon" href="/favicon.ico" />
+
     <style>
       body {
         overflow: hidden;
@@ -14,8 +17,9 @@
         font-size: 0.9rem;
         font-family: sans-serif;
       }
+      /* 省略: device-orien-modal関連のスタイルは変更なし */
       .device-orien-modal {
-        z-index: 1;
+        z-index: 100; /* モーダルは最前面 */
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -46,16 +50,19 @@
       .is-hidden {
         display: none;
       }
+
+      /* 修正3: z-indexを適切に設定し、ビデオの上にキャンバスが来るようにする */
       .canvas {
         position: fixed;
         top: 0;
         left: 0;
-        z-index: 1;
+        z-index: 2; /* ARコンテンツをカメラ映像の上に配置 */
       }
       .camera {
         position: fixed;
         top: 0;
         left: 0;
+        z-index: 1; /* カメラ映像を背景としてキャンバスの下に配置 */
       }
     </style>
   </head>
