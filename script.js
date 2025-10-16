@@ -1,6 +1,3 @@
-//import * as THREE from "three";
-//import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
-
 let w;
 let h;
 let canvas;
@@ -58,7 +55,7 @@ const adjustVideo = () => {
   const videoWidth = video.videoWidth;
   const videoHeight = video.videoHeight;
 
-  // 修正箇所：型アノテーションを削除
+  // 修正済み：型アノテーションを削除
   let videoAspect = videoWidth / videoHeight;
   let windowAspect = windowWidth / windowHeight;
 
@@ -106,7 +103,7 @@ const checkDeviceOrien = () => {
     deviceOrienModal.classList.remove("is-hidden");
 
     deviceOrienModalButton.addEventListener("click", () => {
-      // 修正箇所：`as any`を削除し、純粋なJavaScript構文に修正
+      // 修正済み：`as any`を削除し、純粋なJavaScript構文に修正
       if (
         DeviceMotionEvent &&
         DeviceMotionEvent.requestPermission &&
@@ -149,7 +146,9 @@ const initThree = () => {
   setCamera();
   setObject();
   setRenderer();
-  controls = new DeviceOrientationControls(camera, true);
+  
+  // 修正済み：DeviceOrientationControlsをTHREE名前空間から呼び出す
+  controls = new THREE.DeviceOrientationControls(camera, true);
 };
 
 const setScene = () => {
