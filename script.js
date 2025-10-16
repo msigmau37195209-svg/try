@@ -14,19 +14,15 @@ let deviceOrienModal = null;
 let deviceOrienModalButton = null;
 
 let video = null;
-// let videoInput = null; // 削除: 不要になりました
 let videoStream = null;
 
 const initVideo = () => {
   video = document.getElementById("camera");
   video.addEventListener("loadedmetadata", adjustVideo);
-
-  // 修正4: enumerateDevicesとvideoInputの処理を削除し、getVideoを直接呼び出す
   getVideo();
 };
 
 const setVideo = () => {
-  // 修正5: deviceIdの指定を削除し、facingMode: "environment" のみで背面カメラを要求
   return {
     audio: false,
     video: {
@@ -62,8 +58,7 @@ const adjustVideo = () => {
   const videoWidth = video.videoWidth;
   const videoHeight = video.videoHeight;
 
-  // 型アノテーション（: number）はTypeScriptの構文なので、通常のJavaScriptでは削除するか残して動作確認が必要です。
-  // ここでは通常のJavaScriptとして動作するよう型アノテーションを削除します。
+  // 修正箇所：型アノテーションを削除
   let videoAspect = videoWidth / videoHeight;
   let windowAspect = windowWidth / windowHeight;
 
@@ -111,19 +106,20 @@ const checkDeviceOrien = () => {
     deviceOrienModal.classList.remove("is-hidden");
 
     deviceOrienModalButton.addEventListener("click", () => {
+      // 修正箇所：`as any`を削除し、純粋なJavaScript構文に修正
       if (
         DeviceMotionEvent &&
-        (DeviceMotionEvent as any).requestPermission &&
-        typeof (DeviceMotionEvent as any).requestPermission === "function"
+        DeviceMotionEvent.requestPermission &&
+        typeof DeviceMotionEvent.requestPermission === "function"
       ) {
-        (DeviceMotionEvent as any).requestPermission().then((res: any) => {});
+        DeviceMotionEvent.requestPermission().then((res) => {});
       }
       if (
         DeviceOrientationEvent &&
-        (DeviceOrientationEvent as any).requestPermission &&
-        typeof (DeviceOrientationEvent as any).requestPermission === "function"
+        DeviceOrientationEvent.requestPermission &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
       ) {
-        (DeviceOrientationEvent as any).requestPermission().then((res: any) => {
+        DeviceOrientationEvent.requestPermission().then((res) => {
           console.log(res);
           if (res === "granted") {
             hideDeviceOrienModal();
@@ -181,7 +177,6 @@ const setRenderer = () => {
     alpha: true,
     canvas: canvas,
   });
-  // 背景は完全に透明（白飛びの原因ではない）
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(w, h);
   renderer.setPixelRatio(window.devicePixelRatio);
