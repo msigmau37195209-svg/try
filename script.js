@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { DeviceOrientationControls } from "three/examples/jsm/controls/DeviceOrientationControls";
+
 let w;
 let h;
 let canvas;
@@ -13,29 +14,22 @@ let deviceOrienModal = null;
 let deviceOrienModalButton = null;
 
 let video = null;
-let videoInput = null;
+// let videoInput = null; // 削除: 不要になりました
 let videoStream = null;
 
 const initVideo = () => {
   video = document.getElementById("camera");
   video.addEventListener("loadedmetadata", adjustVideo);
 
-  navigator.mediaDevices
-    .enumerateDevices()
-    .then((devices) => {
-      videoInput = devices.filter((device) => device.kind === "videoinput");
-      getVideo();
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  // 修正4: enumerateDevicesとvideoInputの処理を削除し、getVideoを直接呼び出す
+  getVideo();
 };
 
 const setVideo = () => {
+  // 修正5: deviceIdの指定を削除し、facingMode: "environment" のみで背面カメラを要求
   return {
     audio: false,
     video: {
-      deviceId: videoInput,
       facingMode: "environment",
       width: { min: 1280, max: 1920 },
       height: { min: 720, max: 1080 },
@@ -68,17 +62,19 @@ const adjustVideo = () => {
   const videoWidth = video.videoWidth;
   const videoHeight = video.videoHeight;
 
-  let videoAspect: number = videoWidth / videoHeight;
-  let windowAspect: number = windowWidth / windowHeight;
+  // 型アノテーション（: number）はTypeScriptの構文なので、通常のJavaScriptでは削除するか残して動作確認が必要です。
+  // ここでは通常のJavaScriptとして動作するよう型アノテーションを削除します。
+  let videoAspect = videoWidth / videoHeight;
+  let windowAspect = windowWidth / windowHeight;
 
   if (windowAspect < videoAspect) {
-    let newWidth: number = videoAspect * windowHeight;
+    let newWidth = videoAspect * windowHeight;
     video.style.width = newWidth + "px";
     video.style.marginLeft = -(newWidth - windowWidth) / 2 + "px";
     video.style.height = windowHeight + "px";
     video.style.marginTop = "0px";
   } else {
-    let newHeight: number = 1 / (videoAspect / windowWidth);
+    let newHeight = 1 / (videoAspect / windowWidth);
     video.style.height = newHeight + "px";
     video.style.marginTop = -(newHeight - windowHeight) / 2 + "px";
     video.style.width = windowWidth + "px";
@@ -185,6 +181,7 @@ const setRenderer = () => {
     alpha: true,
     canvas: canvas,
   });
+  // 背景は完全に透明（白飛びの原因ではない）
   renderer.setClearColor(0x000000, 0);
   renderer.setSize(w, h);
   renderer.setPixelRatio(window.devicePixelRatio);
